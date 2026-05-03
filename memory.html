@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story Timeline</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;600&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F5E8DC;
+            --text-main: #5C4B33;
+            --sakura-pink: #ffb7c5;
+            --accent-red: #e74c3c;
+            --branch: #3a2a1d; 
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Quicksand', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #start-screen {
+            text-align: center;
+            cursor: pointer;
+            transition: opacity 0.8s;
+        }
+
+        .heart-btn {
+            width: 80px;
+            height: 80px;
+            fill: var(--accent-red);
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        #main-content {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        #tree-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        /* Анимация лепестков-искр */
+        .leaf {
+            opacity: 0;
+            animation: sparkFall 3.5s ease-out forwards;
+            transform-origin: center;
+        }
+
+        @keyframes sparkFall {
+            0% {
+                transform: translate(0, 0) scale(0);
+                opacity: 0;
+            }
+            15% {
+                transform: translate(0, -15px) scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0.3) rotate(var(--tr));
+                opacity: 0;
+            }
+        }
+
+        /* Таймлайн */
+        .timeline {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background: rgba(92, 75, 51, 0.2);
+            top: 0; bottom: 0; left: 50%;
+            margin-left: -1px;
+        }
+
+        .milestone {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+
+        .milestone.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .left { left: 0; text-align: right; }
+        .right { left: 50%; text-align: left; }
+
+        .milestone::after {
+            content: '❤';
+            position: absolute;
+            width: 20px; height: 20px;
+            right: -13px; top: 15px;
+            background: var(--bg-color);
+            color: var(--accent-red);
+            font-size: 14px;
+            z-index: 1;
+        }
+
+        .right::after { left: -10px; }
+
+        .content {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .date { font-weight: 600; color: var(--accent-red); margin-bottom: 5px; }
+        .title { font-family: 'Pacifico', cursive; font-size: 1.1rem; margin-bottom: 8px; color: #4a3728; }
+        .desc { font-size: 0.9rem; line-height: 1.4; }
+
+        #live-timer {
+            text-align: center;
+            margin-top: 40px;
+            font-weight: 500;
+            border-top: 1px dashed rgba(92, 75, 51, 0.3);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="start-screen" onclick="init()">
+    <svg class="heart-btn" viewBox="0 0 32 32">
+        <path d="M16 28.5L14.1 26.7C7.33 20.57 2.83 16.5 2.83 11.5C2.83 7.42 6.03 4.22 10.11 4.22C12.41 4.22 14.62 5.29 16 6.97C17.38 5.29 19.59 4.22 21.89 4.22C25.97 4.22 29.17 7.42 29.17 11.5C29.17 16.5 24.67 20.57 17.9 26.72L16 28.5Z" />
+    </svg>
+    <div style="font-family: 'Pacifico', cursive; margin-top: 10px;">Click here</div>
+</div>
+
+<div id="main-content">
+    <div id="tree-wrapper">
+        <svg id="tree-svg" viewBox="0 0 240 200" width="350" height="300">
+            <ellipse cx="120" cy="190" rx="40" ry="5" fill="rgba(0,0,0,0.1)" />
+            
+            <path d="M110,190 C110,170 100,160 90,140 C80,120 100,100 120,90 C140,80 150,60 140,40" 
+                  fill="none" stroke="var(--branch)" stroke-width="12" stroke-linecap="round" />
+            <path d="M95,145 C80,140 60,145 45,135" fill="none" stroke="var(--branch)" stroke-width="6" stroke-linecap="round" />
+            <path d="M115,110 C135,115 160,110 180,120" fill="none" stroke="var(--branch)" stroke-width="7" stroke-linecap="round" />
+            <path d="M130,75 C150,70 170,75 190,65" fill="none" stroke="var(--branch)" stroke-width="5" stroke-linecap="round" />
+
+            <g class="foliage" fill="var(--sakura-pink)" opacity="0.8">
+                <circle cx="140" cy="35" r="22" />
+                <circle cx="160" cy="45" r="18" />
+                <circle cx="45" cy="135" r="20" />
+                <circle cx="65" cy="130" r="15" />
+                <circle cx="180" cy="120" r="22" />
+                <circle cx="200" cy="125" r="18" />
+                <circle cx="190" cy="65" r="18" />
+                <circle cx="170" cy="60" r="15" />
+            </g>
+
+            <g id="spawn-points" display="none">
+                <rect x="130" y="30" width="40" height="20" />
+                <rect x="35" y="125" width="40" height="20" />
+                <rect x="170" y="110" width="40" height="20" />
+                <rect x="160" y="55" width="40" height="20" />
+            </g>
+        </svg>
+    </div>
+
+    <div class="timeline" id="timeline-box">
+        <div class="milestone left">
+            <div class="content">
+                <div class="date">Nov 7, 2022</div>
+                <div class="title">"The Beginning"</div>
+                <div class="desc">We started in the same class and the same study group. The day our paths first crossed.</div>
+            </div>
+        </div>
+        <div class="milestone right">
+            <div class="content">
+                <div class="date">Sep 23, 2024</div>
+                <div class="title">"One Desk, Two Worlds"</div>
+                <div class="desc">We were sat at the same desk. While the class group chat was in total chaos, we were in our own world in the DMs.</div>
+            </div>
+        </div>
+        <div class="milestone left">
+            <div class="content">
+                <div class="date">Oct 10, 2025</div>
+                <div class="title">"The Shift"</div>
+                <div class="desc">When everything changed and we started talking truly closely.</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="live-timer"></div>
+</div>
+
+<script>
+    const startDay = new Date('2022-11-07T00:00:00');
+
+    function init() {
+        document.getElementById('start-screen').style.display = 'none';
+        const main = document.getElementById('main-content');
+        main.style.display = 'block';
+        setTimeout(() => main.style.opacity = '1', 50);
+
+        setInterval(spawnSpark, 150); // Постоянно создаем новые "искры"
+        showMilestones();
+        setInterval(updateClock, 1000);
+    }
+
+    function spawnSpark() {
+        const svg = document.getElementById('tree-svg');
+        const spawnAreas = document.querySelectorAll('#spawn-points rect');
+        const colors = ['#ffb7c5', '#ffc0cb', '#f8a5c2', '#ff99aa', '#e74c3c'];
+        
+        const area = spawnAreas[Math.floor(Math.random() * spawnAreas.length)];
+        const x = parseFloat(area.getAttribute('x')) + Math.random() * parseFloat(area.getAttribute('width'));
+        const y = parseFloat(area.getAttribute('y')) + Math.random() * parseFloat(area.getAttribute('height'));
+
+        const leaf = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        // Рисуем маленькое сердечко
+        leaf.setAttribute("d", "M5,15 A2.5,2.5 0 0,1 10,15 A2.5,2.5 0 0,1 15,15 Q15,20 10,25 Q5,20 5,15");
+        leaf.setAttribute("fill", colors[Math.floor(Math.random() * colors.length)]);
+        leaf.setAttribute("class", "leaf");
+
+        // Случайные параметры анимации
+        const tx = (Math.random() - 0.5) * 80; // Смещение по X
+        const ty = 100 + Math.random() * 50;   // Падение вниз
+        const tr = Math.random() * 360;        // Вращение
+        
+        leaf.style.setProperty('--tx', tx + 'px');
+        leaf.style.setProperty('--ty', ty + 'px');
+        leaf.style.setProperty('--tr', tr + 'deg');
+
+        const scale = 0.1 + Math.random() * 0.2;
+        leaf.setAttribute("transform", `translate(${x},${y}) scale(${scale})`);
+
+        svg.appendChild(leaf);
+
+        // Удаляем из памяти после анимации
+        setTimeout(() => leaf.remove(), 3500);
+    }
+
+    function showMilestones() {
+        const items = document.querySelectorAll('.milestone');
+        items.forEach((item, idx) => {
+            setTimeout(() => item.classList.add('show'), 1000 + (idx * 1200));
+        });
+    }
+
+    function updateClock() {
+        const now = new Date();
+        const diff = now - startDay;
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff / 3600000) % 24);
+        const m = Math.floor((diff / 60000) % 60);
+        const s = Math.floor((diff / 1000) % 60);
+        document.getElementById('live-timer').innerHTML = 
+            `Our story has been unfolding for:<br><strong>${d} days, ${h} hours, ${m} minutes, ${s} seconds</strong>`;
+    }
+</script>
+
+</body>
+</html>
